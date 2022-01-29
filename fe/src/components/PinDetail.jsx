@@ -95,6 +95,21 @@ const PinDetail = ({user}) => {
             </div>
           ))}
         </div>
+        <div className="flex flex-wrap mt-6 gap-3">
+          <Link to={`user-profile/${pinDetail?.postedBy?._id}`} >
+            <img
+              src={pinDetail?.postedBy?.image}
+              alt="user-profile"
+              className="w-8 h-8 rounded-full cursor-pointer" />
+          </Link>
+          <input
+            className='flex-1 border-gray-100 outline-none border-2 p-2 rounded-xl focus:border-gray-300'
+            type="text"
+            placeholder="Add a comment"
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
+          />
+        </div>
       </div>
     </div>
   )
