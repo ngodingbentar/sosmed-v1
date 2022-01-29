@@ -21,7 +21,7 @@ const PinDetail = ({user}) => {
     if(query){
       client.fetch(query)
         .then((data) => {
-          console.log('data', data)
+          console.log('detail', data)
           setPinDetail(data[0])
 
           if(data[0]){
@@ -30,6 +30,30 @@ const PinDetail = ({user}) => {
             client.fetch(query)
               .then((res) => setPins(res))
           }
+        })
+    }
+  }
+
+  const addComment = () => {
+    if(comment) {
+      setAddingComment(true)
+
+      client
+        .patch(pinId)
+        .setIfMissing({comments: []})
+        .insert('after', 'comments[-1]',[{
+          comment,
+          _key: uuidv4(),
+          postedBy: {
+            _type: 'postedBy',
+            _ref: user._id,
+          }
+        }])
+        .commit()
+        .then(() => {
+          fetchPinDetails()
+          setComment('')
+          setAddingComment(false)
         })
     }
   }
@@ -100,7 +124,7 @@ const PinDetail = ({user}) => {
             <img
               src={pinDetail?.postedBy?.image}
               alt="user-profile"
-              className="w-8 h-8 rounded-full cursor-pointer" />
+              className="w-10 h-10 rounded-full cursor-pointer" />
           </Link>
           <input
             className='flex-1 border-gray-100 outline-none border-2 p-2 rounded-xl focus:border-gray-300'
@@ -109,6 +133,13 @@ const PinDetail = ({user}) => {
             value={comment}
             onChange={(e) => setComment(e.target.value)}
           />
+          <button
+            type='button'
+            className="bg-red-500 text-white rounded-full px-6 py-2 font-semibold text-base outline-none "
+            onClick={addComment}
+          >
+            {addingComment ? 'Posting the comment...' : 'Post'}
+          </button>
         </div>
       </div>
     </div>
